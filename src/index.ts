@@ -65,7 +65,7 @@ app.post('/v1/api/vibe-figma', async (c) => {
 
     const requestData = validation.data
     const {
-      figmaUrl,
+      url,
       accessToken,
       authType,
       useTailwind,
@@ -91,7 +91,7 @@ app.post('/v1/api/vibe-figma', async (c) => {
       }
     )
 
-    const result = await converter.convertFromUrl(figmaUrl)
+    const result = await converter.convertFromUrl(url)
 
     if (!result) {
       return c.json({
@@ -102,13 +102,11 @@ app.post('/v1/api/vibe-figma', async (c) => {
 
     return c.json({
       success: true,
-      data: {
-        jsx: result.jsx,
-        assets: replaceBase64DataUrlsWithPrefix(result.assets),
-        componentName: result.componentName,
-        fonts: result.fonts,
-        css: result.css
-      }
+      jsx: result.jsx,
+      assets: replaceBase64DataUrlsWithPrefix(result.assets),
+      componentName: result.componentName,
+      fonts: result.fonts,
+      css: result.css
     })
 
   } catch (error) {

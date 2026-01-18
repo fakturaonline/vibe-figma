@@ -2,7 +2,7 @@ import { z } from 'zod'
 import type { Context } from 'hono'
 
 export const figmaRequestSchema = z.object({
-  figmaUrl: z.string().url('Invalid Figma URL').refine(
+  url: z.string().url('Invalid Figma URL').refine(
     (url) => url.includes('figma.com'),
     'URL must be a Figma link'
   ),

@@ -93,7 +93,6 @@ export const importFigma = async ({
         if (useNodesEndpoint && options.ids && options.ids.length > 0) {
             const fileData = await response.json() as FigmaFileNodesResponse;
 
-            await Bun.write(`figma_file_nodes_${fileKey}.json`, JSON.stringify(fileData, null, 2));
 
             return {
                 fileKey,
