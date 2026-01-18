@@ -56,7 +56,7 @@ app.get('/health', (c) => {
   })
 })
 
-app.post('/api/vibe-figma', async (c) => {
+app.post('/v1/api/vibe-figma', async (c) => {
   try {
     const validation = await validateRequest(c, figmaRequestSchema)
     if (!validation.success) {
