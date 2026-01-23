@@ -1,7 +1,30 @@
 {
   "name": "vibe_figma",
+  "version": "1.0.0",
+  "description": "Convert Figma designs to React components",
+  "type": "module",
+  "bin": {
+    "vibefigma": "./bin/vibefigma.js"
+  },
+  "files": [
+    "bin/",
+    "dist/cli/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "figma",
+    "react",
+    "converter",
+    "cli",
+    "jsx",
+    "design-to-code"
+  ],
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "dev:cli": "bun run src/cli/index.ts",
+    "build:cli": "bun build src/cli/index.ts --outfile dist/cli/index.js --target node --format esm",
+    "cli": "node bin/vibefigma.js"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.10",
@@ -10,14 +33,18 @@
     "@babel/traverse": "^7.28.6",
     "@babel/types": "^7.28.6",
     "ai": "^6.0.39",
+    "chalk": "^5.6.2",
     "colord": "2.9.3",
+    "commander": "^14.0.2",
     "css-what": "6.1.0",
     "hono": "^4.11.4",
     "hono-rate-limiter": "^0.5.3",
     "htmltojsx": "^0.3.0",
+    "ora": "^9.1.0",
     "postcss": "^8.4.20",
     "postcss-safe-parser": "^6.0.0",
     "prettier": "^3.8.0",
+    "prompts": "^2.4.2",
     "tailwindcss": "3",
     "zod": "^4.3.5"
   },
@@ -26,6 +53,9 @@
     "@types/babel__traverse": "^7.28.0",
     "@types/bun": "latest",
     "@types/htmltojsx": "^0.0.33",
-    "@types/postcss-safe-parser": "^5.0.1"
+    "@types/node": "^25.0.10",
+    "@types/postcss-safe-parser": "^5.0.1",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+
+import { Command } from 'commander'
+import { convertCommand } from './commands/convert.js'
+import type { CliOptions } from './types.js'
+
+const program = new Command()
+
+program
+  .name('vibefigma')
+  .description('Convert Figma designs to React components')
+  .version('1.0.0')
+
+// Main command with URL as optional argument
+program
+  .argument('[url]', 'Figma file/node URL')
+  .option('-t, --token <token>', 'Figma access token (overrides FIGMA_TOKEN env var)')
+  .option('-u, --url <url>', 'Figma file/node URL')
+  .option('--auth-type <type>', 'Token type: x-figma-token | authorization', 'x-figma-token')
+  .option('-c, --component <path>', 'Component output path (default: ./[ComponentName].tsx)')
+  .option('--css <path>', 'CSS output path (default: ./[ComponentName].css)')
+  .option('-a, --assets <dir>', 'Assets directory (default: ./public)')
+  .option('--tailwind', 'Use Tailwind CSS', false)
+  .option('--optimize', 'Optimize components', false)
+  .option('--clean', 'Use AI code cleaner', false)
+  .option('--no-classes', 'Don\'t generate CSS classes')
+  .option('--no-absolute', 'Don\'t use absolute positioning')
+  .option('--no-responsive', 'Disable responsive design')
+  .option('--no-fonts', 'Don\'t include fonts')
+  .option('--interactive', 'Force interactive mode', false)
+  .action(async (urlArg: string | undefined, options: any) => {
+    // Merge URL argument with options
+    const cliOptions: CliOptions = {
+      url: urlArg || options.url,
+      token: options.token,
+      authType: options.authType,
+      component: options.component,
+      css: options.css,
+      assets: options.assets,
+      useTailwind: options.tailwind,
+      optimizeComponents: options.optimize,
+      useCodeCleaner: options.clean,
+      generateClasses: options.classes !== false,
+      useAbsolutePositioning: options.absolute !== false,
+      responsive: options.responsive !== false,
+      includeFonts: options.fonts !== false,
+      interactive: options.interactive,
+    }
+
+    await convertCommand(cliOptions)
+  })
+
+// Global error handler
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled error:', error)
+  process.exit(1)
+})
+
+process.on('SIGINT', () => {
+  console.log('\n\nOperation cancelled by user')
+  process.exit(0)
+})
+
+// Parse arguments
+program.parse()

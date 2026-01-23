@@ -67,8 +67,6 @@ export const importFigma = async ({
             apiUrl = `https://api.figma.com/v1/files/${fileKey}${buildQueryString(options)}`;
         }
 
-        console.log(`Fetching from: ${apiUrl}`);
-
         const headers: Record<string, string> = {};
         if (authType === 'authorization') {
             headers['Authorization'] = `Bearer ${accessToken}`;
