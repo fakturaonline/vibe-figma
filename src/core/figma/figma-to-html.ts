@@ -1,8 +1,8 @@
-import type { FigmaToHTMLOptions } from "./types";
-import { FigmaToTailwindConverter } from "./figma-to-tailwind";
+import type { FigmaToHTMLOptions } from "./types.js";
+import { FigmaToTailwindConverter } from "./figma-to-tailwind.js";
 import HTMLtoJSX from "htmltojsx";
-import { generateComponentName } from "./utils/component-name";
-import { transformJsx } from "./transform-jsx";
+import { generateComponentName } from "./utils/component-name.js";
+import { transformJsx } from "./transform-jsx.js";
 
 export class FigmaToHTML {
   options: FigmaToHTMLOptions & Record<string, any>;

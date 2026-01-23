@@ -3,7 +3,7 @@ import type {
     FigmaFileNodesResponse,
     FigmaFileResponse,
     ImportOptions
-} from "./types"
+} from "./types.js"
 
 
 function extractFileKey(url: string): string | null {
