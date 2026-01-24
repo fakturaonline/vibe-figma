@@ -2,6 +2,20 @@
 
 Transform your Figma designs into production-ready React components with Tailwind CSS automatically. VibeFigma leverages the official Figma API to accurately extract design information and generate clean, maintainable code.
 
+## Demo
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=6DhaK_thwkc">
+    <img src="https://img.youtube.com/vi/6DhaK_thwkc/maxresdefault.jpg" alt="VibeFigma Demo" style="width:100%;max-width:720px;">
+  </a>
+</div>
+
+## CLI in Action
+
+<div align="center">
+  <img src=".github/cli-demo.png" alt="VibeFigma CLI Demo" style="width:100%;max-width:800px;">
+</div>
+
 ## Features
 
 - **Official Figma API Integration** - Direct integration with Figma's API for accurate design extraction
@@ -17,6 +31,9 @@ No installation required! Just run:
 
 ```bash
 npx vibefigma [figma-url] --token YOUR_FIGMA_TOKEN
+
+# Example with a public design:
+npx vibefigma https://www.figma.com/design/rZbJ7EQucq6UCkqlIl1a6P/Personal-Portfolio-Website-Template--Community?node-id=7-191 --token YOUR_TOKEN
 ```
 
 ### Using Environment Variable
