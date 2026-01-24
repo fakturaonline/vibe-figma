@@ -76,7 +76,7 @@ This will prompt you for:
 - Access token (if not set in environment)
 - Output paths
 
-## Step 3: Advanced Usage
+## Advanced Usage
 
 ### Basic Usage
 
