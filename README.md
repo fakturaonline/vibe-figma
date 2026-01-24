@@ -10,12 +10,6 @@ Transform your Figma designs into production-ready React components with Tailwin
   </a>
 </div>
 
-## CLI in Action
-
-<div align="center">
-  <img src=".github/cli-demo.png" alt="VibeFigma CLI Demo" style="width:100%;max-width:800px;">
-</div>
-
 ## Features
 
 - **Official Figma API Integration** - Direct integration with Figma's API for accurate design extraction
@@ -75,6 +69,10 @@ This will prompt you for:
 - Figma URL
 - Access token (if not set in environment)
 - Output paths
+
+<div align="center">
+  <img src=".github/cli-demo.png" alt="VibeFigma CLI Demo" style="width:100%;max-width:800px;">
+</div>
 
 ## Advanced Usage
 
