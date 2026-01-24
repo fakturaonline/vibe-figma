@@ -177,7 +177,7 @@ POST /v1/api/vibe-figma
 See [API.md](docs/API.md) for full API documentation.
 
 
-### CLI Development
+## CLI Development
 
 ```bash
 # Run CLI in development mode
