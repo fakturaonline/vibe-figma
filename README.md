@@ -185,6 +185,6 @@ This project includes code derived from [css-to-tailwindcss](https://github.com/
 
 ## License
 
-This project is licensed under the Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT). See the [LICENSE](LICENSE) file for the full license text.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the [LICENSE](LICENSE) file for the full license text.
 
 See the [NOTICE](NOTICE) file for details about third-party code used in this project.
