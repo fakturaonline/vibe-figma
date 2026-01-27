@@ -1,6 +1,6 @@
 {
   "name": "vibefigma",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert Figma designs to React components with Tailwind CSS",
   "type": "module",
   "main": "dist/cli/index.js",
@@ -41,7 +41,7 @@
     "url": "https://github.com/vibeflowing-inc/vibe_figma/issues"
   },
   "homepage": "https://github.com/vibeflowing-inc/vibe_figma#readme",
-  "license": "FSL-1.1-MIT",
+  "license": "AGPL-3.0",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -50,7 +50,7 @@
     "dev:cli": "bun run src/cli/index.ts",
     "build:cli": "mkdir -p dist/cli && bun build src/cli/index.ts --outdir dist/cli --target node --format esm --entry-naming [name].js",
     "cli": "node bin/vibefigma.js",
-    "prepublishOnly": "bun run build:cli",
+    "prepublishOnly": "bun run build:cli"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.10",
