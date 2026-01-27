@@ -32,9 +32,9 @@ const createBanner = () => {
   })
 
   return '\n' + gradientLines.join('\n') + '\n\n' +
-    chalk.hex('#666')('  ╔═══════════════════════════════════════════════════════════════════╗') + '\n' +
-    chalk.hex('#666')('  ║  ') + chalk.hex('#F24E1E')('Figma') + chalk.hex('#A259FF')(' → ') + chalk.hex('#1ABCFE')('React + Tailwind') + chalk.hex('#555')('  │  ') + chalk.hex('#999')('Design to Code in seconds') + chalk.hex('#666')('  ║') + '\n' +
-    chalk.hex('#666')('  ╚═══════════════════════════════════════════════════════════════════╝') + '\n'
+    chalk.hex('#666')('  ╔═══════════════════════════════════════════════════════════════════════════════════╗') + '\n' +
+    chalk.hex('#666')('  ║  ') + chalk.hex('#F24E1E')('Figma') + chalk.hex('#A259FF')(' → ') + chalk.hex('#1ABCFE')('React + Tailwind') + chalk.hex('#555')('  │  ') + chalk.hex('#999')('Design to Code in seconds') + chalk.hex('#777')(' • ') + chalk.hex('#1ABCFE')('https://vibeflow.ai') + chalk.hex('#666')('     ║') + '\n' +
+    chalk.hex('#666')('  ╚═══════════════════════════════════════════════════════════════════════════════════╝') + '\n'
 }
 
 
