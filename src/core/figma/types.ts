@@ -1,5 +1,20 @@
 import type { Config } from 'tailwindcss';
 
+export type FrameworkType = 'shadcn' | 'mui' | 'chakra' | 'none';
+
+export interface FrameworkMappingOptions {
+  /** Enable framework mapping */
+  enabled?: boolean;
+  /** Framework to map to */
+  framework?: FrameworkType;
+  /** Minimum confidence threshold for component detection (0-100) */
+  minConfidence?: number;
+  /** Base import path for framework components */
+  baseImportPath?: string;
+  /** Whether to generate component imports */
+  generateImports?: boolean;
+}
+
 export interface FigmaToHTMLOptions {
   useAbsolutePositioning?: boolean;
   generateClasses?: boolean;
@@ -10,6 +25,8 @@ export interface FigmaToHTMLOptions {
   useTailwind?: boolean;
   tailwindConfig?: Config;
   keepFallbackStyles?: boolean;
+  /** Framework mapping options */
+  frameworkMapping?: FrameworkMappingOptions;
   [key: string]: any;
 }
 
@@ -90,6 +107,8 @@ export interface FigmaToReactOptions extends FigmaToHTMLOptions {
     authType?: 'x-figma-token' | 'authorization';
     optimizeComponents?: boolean;
     useCodeCleaner?: boolean;
+    /** Path to custom tailwind.config.js for framework mapping */
+    tailwindConfigPath?: string;
 }
 
 export interface FigmaToReactResult {

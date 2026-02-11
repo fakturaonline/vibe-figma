@@ -14,6 +14,7 @@ export class FigmaToHTML {
   uniqueIdCounter: number;
   rootWidth: number | null;
   tailwindConverter: FigmaToTailwindConverter | null;
+  detectedComponents: Set<string>;
   returnTSX: boolean = true;
 
   constructor(options: Partial<FigmaToHTMLOptions> = {}) {
@@ -39,6 +40,7 @@ export class FigmaToHTML {
     this.tailwindConverter = this.options.useTailwind
       ? new FigmaToTailwindConverter(options.tailwindConfig)
       : null;
+    this.detectedComponents = new Set();
   }
 
   async convert(figmaNode: any) {
@@ -126,6 +128,8 @@ ${finalHtml}
 
   async convertJSX(figmaNode: any, noTailwindImport = false) {
     this.zIndexCounter = 1;
+    this.detectedComponents.clear(); // Clear detected components for fresh conversion
+
     const html = this.convertNode(figmaNode);
     let css = this.generateCSS();
     const fonts = this.generateFontImports();
@@ -157,14 +161,21 @@ ${finalHtml}
       outputClassName: "div",
     });
     const jsx = converter.convert(finalHtml);
-    const tJSX =
-      transformJsx(`const ${generateComponentName(figmaNode.name)} = () => {
+
+    // Generate import statements for shadcn components
+    const shadcnImports = this.generateShadcnImports();
+
+    const componentCode = `const ${generateComponentName(figmaNode.name)} = () => {
     return (
     ${jsx}
     );
   };
 
-  export default ${generateComponentName(figmaNode.name)};`);
+  export default ${generateComponentName(figmaNode.name)};`;
+
+    const fullCode = shadcnImports + componentCode;
+
+    const tJSX = transformJsx(fullCode);
 
     return {
       componentName: generateComponentName(figmaNode.name),
@@ -172,6 +183,31 @@ ${finalHtml}
       fonts,
       css: `${css}${tailwindCSS}`,
     };
+  }
+
+  /**
+   * Generate import statements for detected shadcn components
+   */
+  private generateShadcnImports(): string {
+    if (this.detectedComponents.size === 0) {
+      return "";
+    }
+
+    const mapping = this.options.frameworkMapping;
+    const basePath = mapping?.baseImportPath || "@/components/ui";
+
+    const imports: string[] = [];
+
+    for (const component of this.detectedComponents) {
+      const importPath = `${basePath}/${component.toLowerCase()}`;
+      imports.push(`import { ${component} } from "${importPath}";`);
+    }
+
+    if (imports.length > 0) {
+      return imports.join("\n") + "\n\n";
+    }
+
+    return "";
   }
 
   convertNode(

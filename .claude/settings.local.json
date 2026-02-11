@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(npx -y zai-cli search:*)",
+      "Bash(npx -y zai-cli read:*)",
+      "Bash(bun test:*)",
+      "Bash(bun install:*)",
+      "Bash(bun run --eval 'import\\(\"\"./src/core/figma/variables/types.ts\"\"\\)')",
+      "Bash(bun:*)",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(bunx tsup)"
+    ]
+  }
+}
