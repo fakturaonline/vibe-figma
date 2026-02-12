@@ -39,6 +39,9 @@ export async function convertCommand(options: CliOptions): Promise<void> {
         useAbsolutePositioning: finalOptions.useAbsolutePositioning ?? true,
         responsive: finalOptions.responsive ?? true,
         includeFonts: finalOptions.includeFonts ?? true,
+        dedupeComponents: finalOptions.dedupeComponents ?? false,
+        framework: finalOptions.framework ?? 'none',
+        tailwindConfigPath: finalOptions.tailwindConfigPath,
       }
     )
 

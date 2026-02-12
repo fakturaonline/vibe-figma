@@ -97,6 +97,8 @@ export function showConversionSummary(options: CliOptions): void {
   console.log(`Tailwind:     ${options.useTailwind ? 'Yes' : 'No'}`)
   console.log(`Optimize:     ${options.optimizeComponents ? 'Yes' : 'No'}`)
   console.log(`Clean Code:   ${options.useCodeCleaner ? 'Yes' : 'No'}`)
+  console.log(`Dedupe Components: ${options.dedupeComponents ? 'Yes' : 'No'}`)
+  console.log(`Framework:    ${options.framework || 'none'}`)
   console.log('━'.repeat(50))
   console.log()
 }

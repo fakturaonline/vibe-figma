@@ -12,6 +12,9 @@ export interface CliOptions {
   includeFonts?: boolean
   interactive?: boolean
   force?: boolean
+  dedupeComponents?: boolean
+  framework?: 'shadcn' | 'mui' | 'chakra' | 'none'
+  tailwindConfigPath?: string
 }
 
 export interface ConversionResult {

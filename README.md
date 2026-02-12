@@ -1,127 +1,115 @@
 # VibeFigma - Figma to React Converter
-[![npm](https://img.shields.io/npm/v/vibefigma)](https://www.npmjs.com/package/vibefigma)
-[![stars](https://img.shields.io/github/stars/vibeflowing-inc/vibe_figma)](https://github.com/vibeflowing-inc/vibe_figma)
-[![license](https://img.shields.io/github/license/vibeflowing-inc/vibe_figma)](LICENSE)
-[![Join Discord](https://img.shields.io/badge/Join%20Discord-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/Ctm2A2uEaq)
 
-Transform your Figma designs into production-ready React components with Tailwind CSS automatically.
+[![npm](https://img.shields.io/npm/v/vibefigma)](https://www.npmjs.com/package/vibefigma)
+[![stars](https://img.shields.io/github/stars/vibeflowing-inc/vibefigma)](https://github.com/vibeflowing-inc/vibefigma)
+[![license](https://img.shields.io/github/license/vibeflowing-inc/vibefigma)](LICENSE)
+
+Transform your Figma designs into production-ready React components with Tailwind CSS, shadcn/ui, and your custom design system.
 
 <div align="center">
   <img src=".github/cli-demo.png" alt="VibeFigma CLI" style="width:100%;max-width:800px;">
 </div>
 
+## Features
+
+- **React Component Generation** - Convert Figma frames to React/TypeScript components
+- **Tailwind CSS Support** - Automatic Tailwind class generation with your custom config
+- **AI Code Cleanup** - Optional AI-powered code cleanup for production-ready output
+- **Component Deduplication** - Detect and extract reusable components automatically
+- **UI Framework Mapping** - Map designs to shadcn/ui, MUI, or Chakra components
+- **Custom Design System Support** - Use your existing Tailwind config for perfect consistency
+
 ## Quick Start
 
-VibeFigma can be used in multiple ways:
-
-
-### 1. Using our CLI (Interactive - Easiest!)
+### Interactive Mode (Easiest)
 
 ```bash
 npx vibefigma --interactive
 ```
 
-The CLI will guide you through:
-- Entering your Figma URL
-- Providing your access token
-- Choosing output paths
-
-### 2. Claude Code Skill
-
-For Claude Code, install the skill to enable Figma to React conversion directly within your Claude Code environment.
-
-```sh
-npx skills add vibeflowing-inc/vibe_figma --skill vibefigma
-```
-
-### 3. Direct Command (Fast)
+### Direct Command
 
 ```bash
-npx vibefigma "https://www.figma.com/design/4i8Tp5btFPRqtkYXplnfT6/50-Web-Sign-up-log-in-designs--Community-?node-id=26-2944&t=d8ZfhZOwcLuUz0Jz-4" --token YOUR_TOKEN
-
-# Add --force to overwrite existing files without confirmation
-npx vibefigma "https://www.figma.com/design/4i8Tp5btFPRqtkYXplnfT6/50-Web-Sign-up-log-in-designs--Community-?node-id=26-2944&t=d8ZfhZOwcLuUz0Jz-4" --token YOUR_TOKEN --force
+npx vibefigma "https://www.figma.com/design/..." --token YOUR_TOKEN
 ```
 
-### 3. Using Environment Variable
+## New Features
 
-Set your Figma token once:
+### 1. Component Deduplication
+
+Automatically detect and extract duplicate components:
 
 ```bash
-export FIGMA_TOKEN=your_figma_access_token
-npx vibefigma "https://www.figma.com/design/4i8Tp5btFPRqtkYXplnfT6/50-Web-Sign-up-log-in-designs--Community-?node-id=26-2944&t=d8ZfhZOwcLuUz0Jz-4"
+npx vibefigma [url] --dedupe-components
 ```
 
-### 🔑 Getting a Figma Access Token
+Features:
+- Tree-based similarity detection
+- Automatic component extraction with typed props
+- Reduces code duplication
 
-1. Go to [Figma Account Settings](https://www.figma.com/settings)
-2. Scroll to **Personal Access Tokens**
-3. Click **Generate new token**
-4. Give it a name and click **Generate**
-5. Copy the token (you won't see it again!)
-6. Store it securely in a `.env` file or pass via `--token` flag
+### 2. UI Framework Mapping
 
-
-## Features
-
-- **Official Figma API Integration** - Direct integration with Figma's API for accurate design extraction
-- **React Component Generation** - Convert Figma frames to React/TypeScript components
-- **Tailwind CSS Support** - Automatic Tailwind class generation (enabled by default)
-- **Code Optimization** - Optional AI-powered code cleanup
-
-## Advanced Usage
-
-### Basic Usage
+Map your Figma designs to popular UI frameworks:
 
 ```bash
-# Convert a Figma design to React component
-npx vibefigma "https://www.figma.com/design/4i8Tp5btFPRqtkYXplnfT6/50-Web-Sign-up-log-in-designs--Community-?node-id=26-2944&t=d8ZfhZOwcLuUz0Jz-4"
+npx vibefigma [url] --framework shadcn --tailwind-config ./tailwind.config.js
 ```
 
-### Custom Output Paths
+Supported frameworks:
+- `shadcn` - shadcn/ui components (recommended)
+- `mui` - Material-UI components
+- `chakra` - Chakra UI components
+- `none` - Plain HTML/CSS (default)
+
+**Custom Design System Integration:**
+
+When you provide your `tailwind.config.js`, the AI mapper will:
+- Replace hex colors with your custom color classes (e.g., `bg-brand-primary`, `text-text-primary`)
+- Use your custom spacing scale (e.g., `spacing-300`, `gap-400`)
+- Apply your custom border radius (`rounded-100`, `rounded-200`)
+- Use your custom font sizes (`body-sm`, `heading-lg`)
+
+### 3. AI Code Cleanup
+
+Clean up generated code with AI:
 
 ```bash
-# Save to specific directory
-npx vibefigma [url] -c ./src/components -a ./public/assets
-
-# Save to specific file
-npx vibefigma [url] -c ./src/components/Hero.tsx
+npx vibefigma [url] --clean
 ```
 
-### Disable Tailwind CSS
+Requires `GOOGLE_GENERATIVE_AI_API_KEY` environment variable.
+
+## Complete Workflow
+
+The conversion pipeline runs in this order:
+
+1. **Figma → JSX** - Convert design to React JSX
+2. **Optimize** (optional) - Run Babel transformations
+3. **AI Clean** (optional) - Clean up code quality
+4. **Component Deduplication** (optional) - Extract reusable components
+5. **Framework Mapping** (optional) - Map to shadcn/ui with your design system
+6. **Color Mapping** - Apply your custom Tailwind colors
+
+### Full Example
 
 ```bash
-# Generate regular CSS instead of Tailwind
-npx vibefigma [url] --no-tailwind
-```
+export GOOGLE_GENERATIVE_AI_API_KEY=your_key
 
-### Skip Overwrite Confirmations
-
-```bash
-# Overwrite existing files without prompting (useful when files already exist)
-npx vibefigma [url] --force
-
-# Example with specific output path
-npx vibefigma [url] -c ./src/components/Hero.tsx --force
-```
-
-### Advanced Options
-
-```bash
-npx vibefigma [url] \
-  --token YOUR_TOKEN \
-  --component ./src/components \
-  --assets ./public/assets \
-  --optimize \
-  --clean
+npx vibefigma \
+  "https://www.figma.com/design/..." \
+  --token $FIGMA_TOKEN \
+  --framework shadcn \
+  --tailwind-config ./tailwind.config.js \
+  --dedupe-components \
+  --clean \
+  --force
 ```
 
 ## Command Options
 
 ```
 Usage: vibefigma [options] [url]
-
-Convert Figma designs to React components
 
 Arguments:
   url                           Figma file/node URL
@@ -133,92 +121,132 @@ Options:
   -c, --component <path>        Component output path (default: ./src/components/[ComponentName].tsx)
   -a, --assets <dir>            Assets directory (default: ./public)
   --no-tailwind                 Disable Tailwind CSS (enabled by default)
-  --optimize                    Optimize components
+  --optimize                    Optimize components using Babel transformations
   --clean                       Use AI code cleaner (requires GOOGLE_GENERATIVE_AI_API_KEY)
   --no-classes                  Don't generate CSS classes
   --no-absolute                 Don't use absolute positioning
   --no-responsive               Disable responsive design
   --no-fonts                    Don't include fonts
+  --dedupe-components           Detect and deduplicate similar components
+  --framework <type>            Target UI framework (shadcn|mui|chakra|none)
+  --tailwind-config <path>      Path to your tailwind.config.js for design system mapping
   --interactive                 Force interactive mode
   -f, --force                   Overwrite existing files without confirmation
   -h, --help                    Display help for command
 ```
 
+## Environment Variables
 
-## API Server
+```bash
+# Figma API
+FIGMA_TOKEN=your_figma_access_token
+FIGMA_ACCESS_TOKEN=your_figma_access_token
 
-This project also includes a REST API server:
+# Google AI (for code cleanup and framework mapping)
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_key
+```
+
+## Output Examples
+
+### Basic Conversion
+
+```bash
+npx vibefigma "https://www.figma.com/design/..."
+```
+
+**Before (Figma):**
+- Nested frames
+- Auto-layout constraints
+- Vector networks
+
+**After (React):**
+```tsx
+const ComponentName = () => {
+  return (
+    <div className="flex flex-col gap-4 p-6">
+      <h1 className="text-2xl font-bold">Title</h1>
+      <p className="text-gray-600">Description</p>
+    </div>
+  );
+};
+```
+
+### With Framework Mapping
+
+```bash
+npx vibefigma "https://www.figma.com/design/..." \
+  --framework shadcn \
+  --tailwind-config ./tailwind.config.js \
+  --clean
+```
+
+**After (shadcn/ui with design system):**
+```tsx
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+const ComponentName = () => {
+  return (
+    <Card className="p-600 border-border-primary">
+      <CardHeader>
+        <CardTitle className="text-text-primary">Title</CardTitle>
+      </CardHeader>
+      <CardContent className="text-text-secondary">
+        Description
+      </CardContent>
+    </Card>
+  );
+};
+```
+
+## Component Deduplication
+
+The `--dedupe-components` flag detects similar subtrees and extracts them as reusable components.
+
+**Before:**
+```tsx
+// Same pattern repeated 5 times
+<div className="flex items-center gap-3">
+  <CheckIcon />
+  <p>Feature text</p>
+</div>
+```
+
+**After:**
+```tsx
+const FeatureItem = ({ text }: { text: string }) => (
+  <div className="flex items-center gap-3">
+    <CheckIcon />
+    <p>{text}</p>
+  </div>
+);
+
+// Used 5 times with different props
+<FeatureItem text="Feature 1" />
+<FeatureItem text="Feature 2" />
+// ...
+```
+
+## Development
 
 ```bash
 # Install dependencies
 bun install
 
-# Run development server
-bun run dev
-
-# Server runs on http://localhost:3000
-```
-
-### Configuration
-
-#### Environment Variables
-
-Create a `.env` file:
-
-```env
-GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_key
-PORT=3000
-HOST=0.0.0.0
-CORS_ORIGIN=*
-```
-
-### API Usage
-
-The project includes a REST API for Figma to React conversion:
-
-```bash
-POST /v1/api/vibe-figma
-```
-
-See [API.md](docs/API.md) for full API documentation.
-
-
-## CLI Development
-
-```bash
 # Run CLI in development mode
 bun run dev:cli
 
 # Build CLI
 bun run build:cli
 
-# Test CLI locally
+# Test CLI
 bun run cli -- --help
 ```
 
-## Demo Video
+## License
 
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=qEYmYixLd0E">
-    <img src="https://img.youtube.com/vi/6DhaK_thwkc/maxresdefault.jpg" alt="VibeFigma Demo" style="width:100%;max-width:720px;">
-  </a>
-</div>
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Acknowledgments
-
-This project includes code derived from [css-to-tailwindcss](https://github.com/Jackardios/css-to-tailwindcss) by Salakhutdinov Salavat, licensed under the MIT License.
-
-## License
-
-This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the [LICENSE](LICENSE) file for the full license text.
-
-See the [NOTICE](NOTICE) file for details about third-party code used in this project.
-
-[![Follow Nazeem](https://img.shields.io/twitter/follow/nazeem?style=social)](https://x.com/n4ze3m)
-[![Follow Alessia](https://img.shields.io/twitter/follow/alessiapacca?style=social)](https://x.com/alessiapacca)
-[![Follow Elia](https://img.shields.io/twitter/follow/eliasaquand?style=social)](https://x.com/eliasaquand)
-

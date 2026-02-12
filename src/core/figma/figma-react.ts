@@ -2,6 +2,8 @@ import { importFigma, fetchFigmaImages } from './figma-client.js';
 import { FigmaToHTML } from './figma-to-html.js';
 import { transformJsx } from './transform-jsx.js';
 import { cleanupGeneratedCodeToReadable } from '../cleaner/index.js';
+import { extractComponents } from './componentization/index.js';
+import { mapToFrameworkWithAI } from '../mapping/framework-mapper-ai.js';
 import type {
     FigmaToReactOptions,
     FigmaToReactResult,
@@ -92,7 +94,9 @@ export class FigmaToReact {
 
             const converterOptions = {
                 ...this.options,
-                imageUrls
+                imageUrls,
+                // Framework mapping is now done AFTER AI cleanup, not during conversion
+                frameworkMapping: undefined
             };
 
             const converter = new FigmaToHTML(converterOptions);
@@ -120,12 +124,46 @@ export class FigmaToReact {
                 }
             }
 
+            // Deduplicate similar components AFTER cleanup but BEFORE framework mapping
+            // (Babel parser can't handle framework imports with path aliases)
+            if (this.options.dedupeComponents) {
+                console.log('Detecting and extracting duplicate components...');
+                try {
+                    const extractionResult = extractComponents(jsx, {
+                        minRepeats: 2,
+                        componentNameBase: 'Reusable',
+                    });
+
+                    if (extractionResult.changed) {
+                        console.log(`Extracted ${extractionResult.components.length} reusable components:`);
+                        for (const comp of extractionResult.components) {
+                            console.log(`  - ${comp.name}: ${comp.count} occurrences`);
+                        }
+                        jsx = extractionResult.code;
+                    } else {
+                        console.log('No duplicate components found');
+                    }
+                } catch (error) {
+                    console.warn('Component deduplication failed, using original JSX:', error);
+                }
+            }
+
+            // Apply framework mapping LAST (after deduplication to avoid Babel parse errors)
+            if (this.options.framework && this.options.framework !== 'none') {
+                console.log(`Applying ${this.options.framework} framework mapping...`);
+                try {
+                    jsx = await mapToFrameworkWithAI(jsx, this.options.framework, this.options.tailwindConfigPath);
+                } catch (error) {
+                    console.warn('Framework mapping failed, using unmapped JSX:', error);
+                }
+            }
+
             return {
                 jsx,
                 assets,
                 componentName: jsxResult.componentName,
                 fonts: jsxResult.fonts,
-                css: jsxResult.css
+                css: jsxResult.css,
             };
 
         } catch (error) {

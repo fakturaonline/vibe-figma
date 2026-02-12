@@ -33,8 +33,11 @@ program
   .option('--no-absolute', 'Don\'t use absolute positioning')
   .option('--no-responsive', 'Disable responsive design')
   .option('--no-fonts', 'Don\'t include fonts')
+  .option('--dedupe-components', 'Detect and deduplicate similar components', false)
+  .option('--framework <type>', 'Target UI framework for component mapping (shadcn|mui|chakra|none)', 'none')
+  .option('--tailwind-config <path>', 'Path to tailwind.config.js for framework mapping context')
   .option('--interactive', 'Force interactive mode', false)
-  .option('-f, --force', 'Overwrite existing files without confirmation', false)
+  .option('--force', 'Overwrite existing files without confirmation', false)
   .action(async (urlArg: string | undefined, options: any) => {
     // Merge URL argument with options
     const cliOptions: CliOptions = {
@@ -49,6 +52,9 @@ program
       useAbsolutePositioning: options.absolute !== false,
       responsive: options.responsive !== false,
       includeFonts: options.fonts !== false,
+      dedupeComponents: options.dedupeComponents,
+      framework: options.framework || 'none',
+      tailwindConfigPath: options.tailwindConfig,
       interactive: options.interactive,
       force: options.force,
     }
