@@ -243,9 +243,15 @@ bun run build:cli
 bun run cli -- --help
 ```
 
+## Acknowledgments
+
+This project includes code derived from [css-to-tailwindcss](https://github.com/Jackardios/css-to-tailwindcss) by Salakhutdinov Salavat, licensed under the MIT License.
+
 ## License
 
-This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the [LICENSE](LICENSE) file for the full license text.
+
+See the [NOTICE](NOTICE) file for details about third-party code used in this project.
 
 ## Contributing
 
