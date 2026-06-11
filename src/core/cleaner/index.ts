@@ -1,5 +1,4 @@
-import { generateText } from "ai"
-import { google } from "@ai-sdk/google"
+import { generateWithClaude } from "../ai/claude-cli.js"
 import fs from 'fs/promises'
 import prompt from "./prompt.txt"
 import { checkTokenBudget, overBudgetWarning } from "../../utils/token-guard.js"
@@ -56,11 +55,6 @@ export const cleanupGeneratedCodeToReadable = async (
     options: CleanupOptions = {}
 ): Promise<string> => {
     try {
-
-        if(!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not set")
-        }
-
         const system = options.variantContext
             ? prompt + buildVariantInstruction(options.variantContext)
             : prompt
@@ -72,13 +66,9 @@ export const cleanupGeneratedCodeToReadable = async (
             return code
         }
 
-        const response = await generateText({
-            model: google('gemini-3-flash-preview'),
-            system,
-            prompt: userPrompt
-        })
+        const responseText = await generateWithClaude(system, userPrompt)
 
-        const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
+        const codeMatch = responseText.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
 
         if (!codeMatch || !codeMatch[1]) {
             console.warn('AI response did not contain <vibe-code> tags, returning raw response');

@@ -139,7 +139,7 @@ Convert a Figma design to a React component.
 | `authType` | string | `'x-figma-token'` | Authentication method: `'x-figma-token'` for personal tokens, `'authorization'` for OAuth |
 | `useTailwind` | boolean | `false` | Convert CSS to Tailwind classes |
 | `optimizeComponents` | boolean | `false` | Auto-extract repeated patterns into components |
-| `useCodeCleaner` | boolean | `false` | Apply AI-powered code cleanup (requires `GOOGLE_GENERATIVE_AI_API_KEY`) |
+| `useCodeCleaner` | boolean | `false` | Apply AI-powered code cleanup (requires the `claude` CLI) |
 | `generateClasses` | boolean | `true` | Generate CSS classes instead of inline styles |
 | `useAbsolutePositioning` | boolean | `true` | Use absolute positioning for elements |
 | `responsive` | boolean | `true` | Generate responsive layouts |
@@ -264,7 +264,7 @@ bun run start
 
 ### Optional
 
-- `GOOGLE_GENERATIVE_AI_API_KEY` - Required only if `useCodeCleaner: true`
+- `CLAUDE_MODEL` - Optional model override for the `claude` CLI (used by `useCodeCleaner: true`; the CLI must be installed and authenticated)
 
 ---
 

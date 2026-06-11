@@ -80,7 +80,7 @@ Clean up generated code with AI:
 npx vibefigma [url] --clean
 ```
 
-Requires `GOOGLE_GENERATIVE_AI_API_KEY` environment variable.
+Requires the [Claude Code CLI](https://claude.com/claude-code) (`claude`) to be installed and authenticated.
 
 ### 4. Component Set Collapse (many variants → one component)
 
@@ -115,8 +115,6 @@ The two AI steps — **AI Clean** (4) and **Framework Mapping** (6) — are each
 ### Full Example
 
 ```bash
-export GOOGLE_GENERATIVE_AI_API_KEY=your_key
-
 npx vibefigma \
   "https://www.figma.com/design/..." \
   --token $FIGMA_TOKEN \
@@ -143,7 +141,7 @@ Options:
   -a, --assets <dir>            Assets directory (default: ./public)
   --no-tailwind                 Disable Tailwind CSS (enabled by default)
   --optimize                    Optimize components using Babel transformations
-  --clean                       Use AI code cleaner (requires GOOGLE_GENERATIVE_AI_API_KEY)
+  --clean                       Use AI code cleaner (requires the claude CLI)
   --no-classes                  Don't generate CSS classes
   --no-absolute                 Don't use absolute positioning
   --no-responsive               Disable responsive design
@@ -166,13 +164,14 @@ Options:
 FIGMA_TOKEN=your_figma_access_token
 FIGMA_ACCESS_TOKEN=your_figma_access_token
 
-# Google AI (for code cleanup and framework mapping)
-GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_key
+# Claude CLI (for code cleanup and framework mapping)
+# Requires the Claude Code CLI to be installed and authenticated.
+# Optionally override the model used (defaults to your Claude Code default):
+CLAUDE_MODEL=sonnet
 
-# Token guard: max estimated input tokens per Gemini call.
-# Default (60000) is tuned for a FREE Gemini API key — a run may issue up to 3
-# Gemini calls within one minute, sharing the free-tier per-minute token budget
-# (~250k TPM for Flash). Raise this on a paid tier.
+# Token guard: hard ceiling on estimated input tokens per AI call.
+# A conversion may issue several AI calls; this prevents sending an
+# over-limit payload that would overflow the model context.
 MAX_AI_INPUT_TOKENS=60000
 ```
 

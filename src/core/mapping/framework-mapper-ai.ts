@@ -1,5 +1,4 @@
-import { generateText } from "ai";
-import { google } from "@ai-sdk/google";
+import { generateWithClaude } from "../ai/claude-cli.js";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { checkTokenBudget, overBudgetWarning } from "../../utils/token-guard.js";
@@ -172,11 +171,6 @@ Now convert the following code:`;
  */
 export async function mapToShadcnWithAI(code: string, tailwindConfigPath?: string): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            console.warn('GOOGLE_GENERATIVE_AI_API_KEY not set, skipping shadcn mapping');
-            return code;
-        }
-
         // Read tailwind config if provided
         const tailwindConfig = tailwindConfigPath ? readTailwindConfig(tailwindConfigPath) : null;
         if (tailwindConfigPath && tailwindConfig) {
@@ -194,13 +188,9 @@ export async function mapToShadcnWithAI(code: string, tailwindConfigPath?: strin
             return code;
         }
 
-        const response = await generateText({
-            model: google('gemini-3-flash-preview'),
-            system,
-            prompt: userPrompt
-        });
+        const responseText = await generateWithClaude(system, userPrompt);
 
-        const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
+        const codeMatch = responseText.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
 
         if (!codeMatch || !codeMatch[1]) {
             console.warn('AI response did not contain <vibe-code> tags, returning original code');
@@ -247,10 +237,6 @@ Now convert the following code:`;
 
 export async function mapToMUIWithAI(code: string): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return code;
-        }
-
         const userPrompt = `Here is the code to map to MUI:\n\n<vibe-code>\n${code}\n</vibe-code>`;
 
         const budget = checkTokenBudget(MUI_FRAMEWORK_MAPPING_PROMPT + userPrompt);
@@ -259,13 +245,9 @@ export async function mapToMUIWithAI(code: string): Promise<string> {
             return code;
         }
 
-        const response = await generateText({
-            model: google('gemini-3-flash-preview'),
-            system: MUI_FRAMEWORK_MAPPING_PROMPT,
-            prompt: userPrompt
-        });
+        const responseText = await generateWithClaude(MUI_FRAMEWORK_MAPPING_PROMPT, userPrompt);
 
-        const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
+        const codeMatch = responseText.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
         return codeMatch?.[1]?.trim() || code;
     } catch (error) {
         console.error('Error during MUI mapping:', error);
@@ -347,10 +329,6 @@ export async function mapColorsWithAI(
     tailwindConfigPath?: string
 ): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return code;
-        }
-
         const tailwindConfig = tailwindConfigPath ? readTailwindConfig(tailwindConfigPath) : null;
 
         console.log('Mapping colors to custom Tailwind classes...');
@@ -364,13 +342,9 @@ export async function mapColorsWithAI(
             return code;
         }
 
-        const response = await generateText({
-            model: google('gemini-3-flash-preview'),
-            system,
-            prompt: userPrompt
-        });
+        const responseText = await generateWithClaude(system, userPrompt);
 
-        const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
+        const codeMatch = responseText.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
 
         if (!codeMatch || !codeMatch[1]) {
             console.warn('AI response did not contain <vibe-code> tags');
