@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { google } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -171,8 +171,8 @@ Now convert the following code:`;
  */
 export async function mapToShadcnWithAI(code: string, tailwindConfigPath?: string): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            console.warn('GOOGLE_GENERATIVE_AI_API_KEY not set, skipping shadcn mapping');
+        if (!process.env.ANTHROPIC_API_KEY) {
+            console.warn('ANTHROPIC_API_KEY not set, skipping shadcn mapping');
             return code;
         }
 
@@ -185,7 +185,8 @@ export async function mapToShadcnWithAI(code: string, tailwindConfigPath?: strin
         console.log('Applying shadcn/ui framework mapping with AI...');
 
         const response = await generateText({
-            model: google('gemini-3-flash-preview'),
+            model: anthropic('claude-sonnet-4-6'),
+            maxOutputTokens: 16000,
             system: SHADCN_FRAMEWORK_MAPPING_PROMPT(tailwindConfig),
             prompt: `Here is the code to map to shadcn/ui:\n\n<vibe-code>\n${code}\n</vibe-code>`
         });
@@ -237,12 +238,13 @@ Now convert the following code:`;
 
 export async function mapToMUIWithAI(code: string): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        if (!process.env.ANTHROPIC_API_KEY) {
             return code;
         }
 
         const response = await generateText({
-            model: google('gemini-3-flash-preview'),
+            model: anthropic('claude-sonnet-4-6'),
+            maxOutputTokens: 16000,
             system: MUI_FRAMEWORK_MAPPING_PROMPT,
             prompt: `Here is the code to map to MUI:\n\n<vibe-code>\n${code}\n</vibe-code>`
         });
@@ -329,7 +331,7 @@ export async function mapColorsWithAI(
     tailwindConfigPath?: string
 ): Promise<string> {
     try {
-        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        if (!process.env.ANTHROPIC_API_KEY) {
             return code;
         }
 
@@ -338,7 +340,8 @@ export async function mapColorsWithAI(
         console.log('Mapping colors to custom Tailwind classes...');
 
         const response = await generateText({
-            model: google('gemini-3-flash-preview'),
+            model: anthropic('claude-sonnet-4-6'),
+            maxOutputTokens: 16000,
             system: COLOR_MAPPING_PROMPT(tailwindConfig),
             prompt: `Here is the code to map colors in:\n\n<vibe-code>\n${code}\n</vibe-code>`
         });

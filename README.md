@@ -78,7 +78,7 @@ Clean up generated code with AI:
 npx vibefigma [url] --clean
 ```
 
-Requires `GOOGLE_GENERATIVE_AI_API_KEY` environment variable.
+Requires `ANTHROPIC_API_KEY` environment variable.
 
 ## Complete Workflow
 
@@ -94,7 +94,7 @@ The conversion pipeline runs in this order:
 ### Full Example
 
 ```bash
-export GOOGLE_GENERATIVE_AI_API_KEY=your_key
+export ANTHROPIC_API_KEY=your_key
 
 npx vibefigma \
   "https://www.figma.com/design/..." \
@@ -122,7 +122,7 @@ Options:
   -a, --assets <dir>            Assets directory (default: ./public)
   --no-tailwind                 Disable Tailwind CSS (enabled by default)
   --optimize                    Optimize components using Babel transformations
-  --clean                       Use AI code cleaner (requires GOOGLE_GENERATIVE_AI_API_KEY)
+  --clean                       Use AI code cleaner (requires ANTHROPIC_API_KEY)
   --no-classes                  Don't generate CSS classes
   --no-absolute                 Don't use absolute positioning
   --no-responsive               Disable responsive design
@@ -142,8 +142,8 @@ Options:
 FIGMA_TOKEN=your_figma_access_token
 FIGMA_ACCESS_TOKEN=your_figma_access_token
 
-# Google AI (for code cleanup and framework mapping)
-GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_key
+# Anthropic Claude (for code cleanup and framework mapping)
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
 ## Output Examples

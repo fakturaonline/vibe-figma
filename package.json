@@ -53,7 +53,7 @@
     "prepublishOnly": "bun run build:cli"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.10",
+    "@ai-sdk/anthropic": "^3.0.82",
     "@babel/generator": "^7.28.6",
     "@babel/parser": "^7.28.6",
     "@babel/traverse": "^7.28.6",

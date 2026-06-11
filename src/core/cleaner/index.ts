@@ -1,5 +1,5 @@
 import { generateText } from "ai"
-import { google } from "@ai-sdk/google"
+import { anthropic } from "@ai-sdk/anthropic"
 import fs from 'fs/promises'
 import prompt from "./prompt.txt"
 
@@ -7,11 +7,12 @@ import prompt from "./prompt.txt"
 export const cleanupGeneratedCodeToReadable = async (code: string): Promise<string> => {
     try {
         
-        if(!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-            throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not set")
+        if(!process.env.ANTHROPIC_API_KEY) {
+            throw new Error("ANTHROPIC_API_KEY is not set")
         }
         const response = await generateText({
-            model: google('gemini-3-flash-preview'),
+            model: anthropic('claude-sonnet-4-6'),
+            maxOutputTokens: 16000,
             system: prompt,
             prompt: `Here is the code to clean:\n\n<vibe-code>\n${code}\n</vibe-code>`
         })
