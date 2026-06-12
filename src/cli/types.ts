@@ -13,6 +13,9 @@ export interface CliOptions {
   interactive?: boolean
   force?: boolean
   dedupeComponents?: boolean
+  collapseVariants?: boolean
+  variantSamples?: number
+  specPath?: string
   framework?: 'shadcn' | 'mui' | 'chakra' | 'none'
   tailwindConfigPath?: string
 }

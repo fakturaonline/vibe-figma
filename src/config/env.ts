@@ -16,6 +16,12 @@ const envSchema = z.object({
   MAX_REQUEST_SIZE: z.string().default('10mb'),
   REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(300000), // 5 minutes
 
+  // Hard ceiling on estimated input tokens per Gemini call (token-guard).
+  // Default 60k is tuned for a FREE Gemini API key: a run may fire up to 3
+  // Gemini calls within one minute, sharing the free-tier per-minute token
+  // budget (~250k TPM for Flash). Raise this on a paid tier.
+  MAX_AI_INPUT_TOKENS: z.coerce.number().int().positive().default(60000),
+
   // Logging
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 

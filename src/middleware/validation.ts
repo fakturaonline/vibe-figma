@@ -15,6 +15,9 @@ export const figmaRequestSchema = z.object({
   useAbsolutePositioning: z.boolean().default(true),
   responsive: z.boolean().default(true),
   includeFonts: z.boolean().default(true),
+  collapseVariants: z.boolean().default(false),
+  variantSamples: z.number().int().positive().optional(),
+  specPath: z.string().optional(),
 })
 
 export type FigmaRequest = z.infer<typeof figmaRequestSchema>

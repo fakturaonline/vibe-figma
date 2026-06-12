@@ -34,6 +34,9 @@ program
   .option('--no-responsive', 'Disable responsive design')
   .option('--no-fonts', 'Don\'t include fonts')
   .option('--dedupe-components', 'Detect and deduplicate similar components', false)
+  .option('--collapse-variants', 'Collapse a component set to one parametrized component (avoids sending every variant to the AI)', false)
+  .option('--variant-samples <n>', 'Max number of variant samples sent to the AI when collapsing (more = better color fidelity, default 48)')
+  .option('--spec <path>', 'Path to a design-system spec (markdown) to anchor the prop contract when collapsing variants')
   .option('--framework <type>', 'Target UI framework for component mapping (shadcn|mui|chakra|none)', 'none')
   .option('--tailwind-config <path>', 'Path to tailwind.config.js for framework mapping context')
   .option('--interactive', 'Force interactive mode', false)
@@ -53,6 +56,9 @@ program
       responsive: options.responsive !== false,
       includeFonts: options.fonts !== false,
       dedupeComponents: options.dedupeComponents,
+      collapseVariants: options.collapseVariants,
+      variantSamples: options.variantSamples != null ? parseInt(options.variantSamples, 10) : undefined,
+      specPath: options.spec,
       framework: options.framework || 'none',
       tailwindConfigPath: options.tailwindConfig,
       interactive: options.interactive,

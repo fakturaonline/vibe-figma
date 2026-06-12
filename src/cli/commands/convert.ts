@@ -40,6 +40,9 @@ export async function convertCommand(options: CliOptions): Promise<void> {
         responsive: finalOptions.responsive ?? true,
         includeFonts: finalOptions.includeFonts ?? true,
         dedupeComponents: finalOptions.dedupeComponents ?? false,
+        collapseVariants: finalOptions.collapseVariants ?? false,
+        variantSamples: finalOptions.variantSamples,
+        specPath: finalOptions.specPath,
         framework: finalOptions.framework ?? 'none',
         tailwindConfigPath: finalOptions.tailwindConfigPath,
       }
