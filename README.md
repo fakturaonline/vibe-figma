@@ -166,8 +166,13 @@ FIGMA_ACCESS_TOKEN=your_figma_access_token
 
 # Claude CLI (for code cleanup and framework mapping)
 # Requires the Claude Code CLI to be installed and authenticated.
-# Optionally override the model used (defaults to your Claude Code default):
-CLAUDE_MODEL=sonnet
+# Model defaults to "haiku" (fast, fine for mechanical cleanup). Override if needed;
+# "sonnet"/"opus" raise fidelity but can stall on large payloads (use --collapse-variants).
+# The CLI uses your Claude subscription — running cleanup while actively using
+# Claude Code shares the same account/rate-limit and slows both down.
+CLAUDE_MODEL=haiku
+# Optional per-call timeout in ms (default 300000):
+CLAUDE_TIMEOUT_MS=300000
 
 # Token guard: hard ceiling on estimated input tokens per AI call.
 # A conversion may issue several AI calls; this prevents sending an
