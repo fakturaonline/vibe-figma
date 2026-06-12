@@ -16,6 +16,8 @@ Transform your Figma designs into production-ready React components with Tailwin
 - **Tailwind CSS Support** - Automatic Tailwind class generation with your custom config
 - **AI Code Cleanup** - Optional AI-powered code cleanup for production-ready output
 - **Component Deduplication** - Detect and extract reusable components automatically
+- **Component Set Collapse** - Turn a multi-variant component set into one parametrized component instead of sending every variant to the AI ([docs](docs/component-sets.md))
+- **Token-safe AI** - A built-in token guard never sends an over-limit payload to Gemini, so conversions degrade gracefully instead of crashing on the free tier
 - **UI Framework Mapping** - Map designs to shadcn/ui, MUI, or Chakra components
 - **Custom Design System Support** - Use your existing Tailwind config for perfect consistency
 
@@ -80,16 +82,35 @@ npx vibefigma [url] --clean
 
 Requires `GOOGLE_GENERATIVE_AI_API_KEY` environment variable.
 
+### 4. Component Set Collapse (many variants → one component)
+
+A Figma component set can hold dozens of variants (e.g. a Button with 6 families × 5 sizes × 6 states ≈ 180 variants). Converting it naively renders ~180 near-identical subtrees and sends them all to Gemini — which blows past the token limit and crashes the run, especially on a free API key.
+
+`--collapse-variants` detects the component set, converts only a small **color-covering sample** of variants (the color-bearing axes at a fixed size, e.g. Variant × State), collects the variant axes, and asks the AI to emit **one parametrized component** (`<Button variant size state>`) instead. Colors are read from the real samples (not guessed) and a deterministic post-pass snaps any LLM color drift back to the design's exact palette.
+
+```bash
+npx vibefigma [url] --clean --collapse-variants --spec ./button.md
+```
+
+- `--collapse-variants` — enable the collapse (requires `--clean` for the parametrized output).
+- `--variant-samples <n>` — max variant samples sent to the AI (default 48). More = better color fidelity; `1` = single representative variant.
+- `--spec <path>` — optional design-system spec (markdown) used to anchor the prop contract, naming, and token usage.
+
+See [docs/component-sets.md](docs/component-sets.md) for details, including the token guard that prevents over-limit crashes even without this flag.
+
 ## Complete Workflow
 
 The conversion pipeline runs in this order:
 
-1. **Figma → JSX** - Convert design to React JSX
-2. **Optimize** (optional) - Run Babel transformations
-3. **AI Clean** (optional) - Clean up code quality
-4. **Component Deduplication** (optional) - Extract reusable components
-5. **Framework Mapping** (optional) - Map to shadcn/ui with your design system
-6. **Color Mapping** - Apply your custom Tailwind colors
+1. **Collapse Variants** (optional) - Reduce a component set to one representative variant + its variant axes
+2. **Figma → JSX** - Convert design to React JSX
+3. **Optimize** (optional) - Run Babel transformations
+4. **AI Clean** (optional) - Clean up code quality (and parametrize, when collapsing variants)
+5. **Component Deduplication** (optional) - Extract reusable components
+6. **Framework Mapping** (optional) - Map to shadcn/ui with your design system
+7. **Color Mapping** - Apply your custom Tailwind colors
+
+The two AI steps — **AI Clean** (4) and **Framework Mapping** (6) — are each wrapped by a **token guard**: if the estimated payload exceeds `MAX_AI_INPUT_TOKENS`, that step is skipped (with a warning) and the un-transformed code is kept — the run never crashes on an over-limit Gemini request. Deduplication (5) and Color Mapping (7) are deterministic and make no AI calls.
 
 ### Full Example
 
@@ -128,6 +149,9 @@ Options:
   --no-responsive               Disable responsive design
   --no-fonts                    Don't include fonts
   --dedupe-components           Detect and deduplicate similar components
+  --collapse-variants           Collapse a component set to one parametrized component
+  --variant-samples <n>         Max variant samples sent to the AI when collapsing (default 48)
+  --spec <path>                 Design-system spec (markdown) to anchor the prop contract when collapsing
   --framework <type>            Target UI framework (shadcn|mui|chakra|none)
   --tailwind-config <path>      Path to your tailwind.config.js for design system mapping
   --interactive                 Force interactive mode
@@ -144,6 +168,12 @@ FIGMA_ACCESS_TOKEN=your_figma_access_token
 
 # Google AI (for code cleanup and framework mapping)
 GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_key
+
+# Token guard: max estimated input tokens per Gemini call.
+# Default (60000) is tuned for a FREE Gemini API key — a run may issue up to 3
+# Gemini calls within one minute, sharing the free-tier per-minute token budget
+# (~250k TPM for Flash). Raise this on a paid tier.
+MAX_AI_INPUT_TOKENS=60000
 ```
 
 ## Output Examples

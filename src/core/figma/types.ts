@@ -109,6 +109,15 @@ export interface FigmaToReactOptions extends FigmaToHTMLOptions {
     useCodeCleaner?: boolean;
     /** Path to custom tailwind.config.js for framework mapping */
     tailwindConfigPath?: string;
+    /**
+     * Collapse a component set (many variants) to a small color-covering sample
+     * of variants + its variant axes, producing one parametrized component.
+     */
+    collapseVariants?: boolean;
+    /** Max number of variant samples to render/send to the AI when collapsing. */
+    variantSamples?: number;
+    /** Path to a design-system spec (markdown) used to anchor the prop contract. */
+    specPath?: string;
 }
 
 export interface FigmaToReactResult {

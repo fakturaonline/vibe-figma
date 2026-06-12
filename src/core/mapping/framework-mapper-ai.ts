@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { checkTokenBudget, overBudgetWarning } from "../../utils/token-guard.js";
 
 /**
  * Read and parse tailwind.config.js file
@@ -184,10 +185,19 @@ export async function mapToShadcnWithAI(code: string, tailwindConfigPath?: strin
 
         console.log('Applying shadcn/ui framework mapping with AI...');
 
+        const system = SHADCN_FRAMEWORK_MAPPING_PROMPT(tailwindConfig);
+        const userPrompt = `Here is the code to map to shadcn/ui:\n\n<vibe-code>\n${code}\n</vibe-code>`;
+
+        const budget = checkTokenBudget(system + userPrompt);
+        if (!budget.withinBudget) {
+            console.warn(overBudgetWarning('shadcn mapping', budget));
+            return code;
+        }
+
         const response = await generateText({
             model: google('gemini-3-flash-preview'),
-            system: SHADCN_FRAMEWORK_MAPPING_PROMPT(tailwindConfig),
-            prompt: `Here is the code to map to shadcn/ui:\n\n<vibe-code>\n${code}\n</vibe-code>`
+            system,
+            prompt: userPrompt
         });
 
         const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
@@ -241,10 +251,18 @@ export async function mapToMUIWithAI(code: string): Promise<string> {
             return code;
         }
 
+        const userPrompt = `Here is the code to map to MUI:\n\n<vibe-code>\n${code}\n</vibe-code>`;
+
+        const budget = checkTokenBudget(MUI_FRAMEWORK_MAPPING_PROMPT + userPrompt);
+        if (!budget.withinBudget) {
+            console.warn(overBudgetWarning('MUI mapping', budget));
+            return code;
+        }
+
         const response = await generateText({
             model: google('gemini-3-flash-preview'),
             system: MUI_FRAMEWORK_MAPPING_PROMPT,
-            prompt: `Here is the code to map to MUI:\n\n<vibe-code>\n${code}\n</vibe-code>`
+            prompt: userPrompt
         });
 
         const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);
@@ -337,10 +355,19 @@ export async function mapColorsWithAI(
 
         console.log('Mapping colors to custom Tailwind classes...');
 
+        const system = COLOR_MAPPING_PROMPT(tailwindConfig);
+        const userPrompt = `Here is the code to map colors in:\n\n<vibe-code>\n${code}\n</vibe-code>`;
+
+        const budget = checkTokenBudget(system + userPrompt);
+        if (!budget.withinBudget) {
+            console.warn(overBudgetWarning('color mapping', budget));
+            return code;
+        }
+
         const response = await generateText({
             model: google('gemini-3-flash-preview'),
-            system: COLOR_MAPPING_PROMPT(tailwindConfig),
-            prompt: `Here is the code to map colors in:\n\n<vibe-code>\n${code}\n</vibe-code>`
+            system,
+            prompt: userPrompt
         });
 
         const codeMatch = response.text.match(/<vibe-code>([\s\S]*?)<\/vibe-code>/);

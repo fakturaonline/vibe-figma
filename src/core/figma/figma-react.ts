@@ -4,6 +4,9 @@ import { transformJsx } from './transform-jsx.js';
 import { cleanupGeneratedCodeToReadable } from '../cleaner/index.js';
 import { extractComponents } from './componentization/index.js';
 import { mapToFrameworkWithAI } from '../mapping/framework-mapper-ai.js';
+import { collapseComponentSet, type VariantContext } from './variant-collapse.js';
+import { extractPalette, snapColorsToPalette } from './color-fidelity.js';
+import { readFile } from 'fs/promises';
 import type {
     FigmaToReactOptions,
     FigmaToReactResult,
@@ -52,11 +55,61 @@ export class FigmaToReact {
                 throw new Error('No document found in Figma data');
             }
 
+            // Collapse a component set (many variants) down to a small,
+            // color-covering SAMPLE of variants + its variant axes, so we don't
+            // render (and send to the LLM) dozens of near-identical subtrees.
+            let nodeToConvert = documentNode;
+            let variantContext: VariantContext | undefined;
+            let variantSamples: Array<{ node: any; label: string }> | undefined;
+
+            if (this.options.collapseVariants) {
+                const collapse = collapseComponentSet(documentNode, {
+                    maxSamples: this.options.variantSamples,
+                });
+                if (collapse) {
+                    const axisCount = Object.keys(collapse.variantAxes).length;
+                    console.log(
+                        `Detected component set "${collapse.componentName}" — collapsing to ${collapse.samples.length} variant sample(s) ` +
+                        `(${axisCount} variant axes: ${Object.entries(collapse.variantAxes)
+                            .map(([k, v]) => `${k}[${v.length}]`)
+                            .join(', ')})`
+                    );
+
+                    variantSamples = collapse.samples.map((s, i) => ({
+                        // Unique wrapper name per sample; the real variant props
+                        // are carried in the label comment for the AI.
+                        node: { ...s.node, name: `${collapse.componentName}Sample${i + 1}` },
+                        label: s.variantName,
+                    }));
+                    nodeToConvert = variantSamples[0].node;
+
+                    let spec: string | undefined;
+                    if (this.options.specPath) {
+                        try {
+                            spec = await readFile(this.options.specPath, 'utf-8');
+                        } catch (error) {
+                            console.warn(`Could not read spec from ${this.options.specPath}:`, error);
+                        }
+                    }
+
+                    variantContext = {
+                        componentName: collapse.componentName,
+                        variantAxes: collapse.variantAxes,
+                        spec,
+                    };
+                } else {
+                    console.log('collapseVariants enabled but no component set found — converting full tree.');
+                }
+            }
+
             console.log('Pre-processing to extract image nodes...');
 
             // First pass: create converter to extract image references
             const preConverter = new FigmaToHTML(this.options);
-            preConverter.convertNode(documentNode);
+            const prepassNodes = variantSamples ? variantSamples.map((s) => s.node) : [nodeToConvert];
+            for (const node of prepassNodes) {
+                preConverter.convertNode(node);
+            }
 
             let imageUrlToFilename: Map<string, string> = new Map();
             let assets: Record<string, string> = {};
@@ -99,10 +152,33 @@ export class FigmaToReact {
                 frameworkMapping: undefined
             };
 
-            const converter = new FigmaToHTML(converterOptions);
-            const jsxResult = await converter.convertJSX(documentNode);
+            let jsxResult: { componentName: string; jsx: string; fonts: string; css: string };
+            let jsx: string;
+            let colorPalette: string[] | undefined;
 
-            let jsx = jsxResult.jsx as string;
+            if (variantSamples) {
+                // Render each sampled variant and concatenate them (each labelled
+                // with its variant props) so the AI sees the REAL colors/styles
+                // per family/state and produces one parametrized component.
+                const blocks: string[] = [];
+                let first: typeof jsxResult | undefined;
+                for (let i = 0; i < variantSamples.length; i++) {
+                    const sampleConverter = new FigmaToHTML(converterOptions);
+                    const r = await sampleConverter.convertJSX(variantSamples[i].node);
+                    if (i === 0) first = r;
+                    blocks.push(`/* Variant sample: ${variantSamples[i].label} */\n${r.jsx}`);
+                }
+                jsxResult = { ...(first as typeof jsxResult), componentName: variantContext!.componentName };
+                jsx = blocks.join('\n\n');
+                // Ground-truth color palette from the raw rendered samples, used
+                // after AI cleanup to repair any color drift introduced by the LLM.
+                colorPalette = extractPalette(jsx);
+            } else {
+                const converter = new FigmaToHTML(converterOptions);
+                jsxResult = await converter.convertJSX(nodeToConvert);
+                jsx = jsxResult.jsx as string;
+            }
+
             jsx = this.replaceImageUrls(jsx, imageUrlToFilename);
 
             if (this.options.optimizeComponents) {
@@ -118,9 +194,19 @@ export class FigmaToReact {
             if (this.options.useCodeCleaner) {
                 console.log('Cleaning up generated code...');
                 try {
-                    jsx = await cleanupGeneratedCodeToReadable(jsx);
+                    jsx = await cleanupGeneratedCodeToReadable(jsx, { variantContext });
                 } catch (error) {
                     console.warn('Code cleanup failed, using uncleaned JSX:', error);
+                }
+
+                // Repair any color drift the LLM may have introduced by snapping
+                // colors back to the design's real palette (collapse path only).
+                if (colorPalette && colorPalette.length > 0) {
+                    const { code, snapped } = snapColorsToPalette(jsx, colorPalette);
+                    if (snapped > 0) {
+                        console.log(`Color fidelity: snapped ${snapped} drifted color(s) back to the design palette.`);
+                    }
+                    jsx = code;
                 }
             }
 
