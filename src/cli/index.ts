@@ -12,6 +12,21 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'))
 
+/**
+ * Parse `--variant-samples`, rejecting non-numeric / non-positive input.
+ * Without this, `parseInt('abc', 10)` yields NaN, which would propagate as the
+ * sample cap and disable the limit entirely.
+ */
+function parseVariantSamples(value: string | undefined): number | undefined {
+  if (value == null) return undefined
+  const n = parseInt(value, 10)
+  if (!Number.isInteger(n) || n <= 0) {
+    console.warn(`Ignoring invalid --variant-samples "${value}" (expected a positive integer)`)
+    return undefined
+  }
+  return n
+}
+
 const program = new Command()
 
 program
@@ -57,7 +72,7 @@ program
       includeFonts: options.fonts !== false,
       dedupeComponents: options.dedupeComponents,
       collapseVariants: options.collapseVariants,
-      variantSamples: options.variantSamples != null ? parseInt(options.variantSamples, 10) : undefined,
+      variantSamples: parseVariantSamples(options.variantSamples),
       specPath: options.spec,
       framework: options.framework || 'none',
       tailwindConfigPath: options.tailwindConfig,

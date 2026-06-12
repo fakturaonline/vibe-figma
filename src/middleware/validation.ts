@@ -17,7 +17,10 @@ export const figmaRequestSchema = z.object({
   includeFonts: z.boolean().default(true),
   collapseVariants: z.boolean().default(false),
   variantSamples: z.number().int().positive().optional(),
-  specPath: z.string().optional(),
+  // NOTE: no `specPath` here on purpose. Accepting a server-side file path from
+  // an HTTP request would let a remote caller read arbitrary files (the path is
+  // passed to readFile and the contents forwarded to the AI). The spec feature
+  // is CLI-only, where the path comes from the local user, not the network.
 })
 
 export type FigmaRequest = z.infer<typeof figmaRequestSchema>

@@ -194,6 +194,14 @@ function generateSamples(
   const axisKeys = Object.keys(axes);
   const defaults = getDefaultValues(setNode);
 
+  // No variant axes => there is nothing to sweep, and every child would share
+  // the same (empty) lookup key, so the keyed map below would silently keep
+  // only the last child. Return the chosen representative explicitly instead.
+  if (axisKeys.length === 0) {
+    const rep = pickRepresentative(setNode, children);
+    return [{ node: rep, variantName: rep.name }];
+  }
+
   // Index children by their full variant key for O(1) lookup.
   const childByKey = new Map<string, any>();
   for (const child of children) {

@@ -110,7 +110,7 @@ The conversion pipeline runs in this order:
 6. **Framework Mapping** (optional) - Map to shadcn/ui with your design system
 7. **Color Mapping** - Apply your custom Tailwind colors
 
-Every AI step (4–7) is wrapped by a **token guard**: if the estimated payload exceeds `MAX_AI_INPUT_TOKENS`, that step is skipped (with a warning) and the un-transformed code is kept — the run never crashes on an over-limit Gemini request.
+The two AI steps — **AI Clean** (4) and **Framework Mapping** (6) — are each wrapped by a **token guard**: if the estimated payload exceeds `MAX_AI_INPUT_TOKENS`, that step is skipped (with a warning) and the un-transformed code is kept — the run never crashes on an over-limit Gemini request. Deduplication (5) and Color Mapping (7) are deterministic and make no AI calls.
 
 ### Full Example
 

@@ -77,7 +77,6 @@ app.post('/v1/api/vibe-figma', async (c) => {
       includeFonts,
       collapseVariants,
       variantSamples,
-      specPath,
     } = requestData
 
     const converter = new FigmaToReact(
@@ -92,8 +91,7 @@ app.post('/v1/api/vibe-figma', async (c) => {
         responsive,
         includeFonts,
         collapseVariants,
-        variantSamples,
-        specPath
+        variantSamples
       }
     )
 
